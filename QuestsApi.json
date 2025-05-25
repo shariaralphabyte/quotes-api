@@ -1,0 +1,493 @@
+{
+	"info": {
+		"_postman_id": "quotes-api-collection",
+		"name": "Quotes API Collection",
+		"description": "Complete API collection for Quotes Management System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "user_api_key",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "admin_api_key",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "1. Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/health",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"health"
+					]
+				},
+				"description": "Check if the API is running and healthy"
+			},
+			"response": []
+		},
+		{
+			"name": "2. Admin Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 200) {",
+							"    const response = pm.response.json();",
+							"    if (response.success && response.data.api_key) {",
+							"        pm.collectionVariables.set('admin_api_key', response.data.api_key);",
+							"        console.log('Admin API Key saved:', response.data.api_key);",
+							"    }",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"Shariar@gmail.com\",\n    \"password\": \"Alpha1234\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/admin/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"login"
+					]
+				},
+				"description": "Login as admin to get admin API key"
+			},
+			"response": []
+		},
+		{
+			"name": "3. Register User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 200) {",
+							"    const response = pm.response.json();",
+							"    if (response.success && response.data.api_key) {",
+							"        pm.collectionVariables.set('user_api_key', response.data.api_key);",
+							"        console.log('User API Key saved:', response.data.api_key);",
+							"    }",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"userpass123\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/register",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"register"
+					]
+				},
+				"description": "Register a new user and get API key"
+			},
+			"response": []
+		},
+		{
+			"name": "4. Add Quote (User)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "X-API-Key",
+						"value": "{{user_api_key}}",
+						"description": "User API Key"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"quote\": \"The only way to do great work is to love what you do.\",\n    \"author\": \"Steve Jobs\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/quotes",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"quotes"
+					]
+				},
+				"description": "Add a new quote using user API key"
+			},
+			"response": []
+		},
+		{
+			"name": "5. Get Quote by ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/quotes/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"quotes",
+						"1"
+					]
+				},
+				"description": "Get a specific quote by ID (public access)"
+			},
+			"response": []
+		},
+		{
+			"name": "6. View All Quotes (Public)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/quotes",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"quotes"
+					]
+				},
+				"description": "View all quotes (public access, no API key needed)"
+			},
+			"response": []
+		},
+		{
+			"name": "7. View All Users (Admin)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-API-Key",
+						"value": "{{admin_api_key}}",
+						"description": "Admin API Key"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/users",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"users"
+					]
+				},
+				"description": "View all users (admin only)"
+			},
+			"response": []
+		},
+		{
+			"name": "8. Deactivate User (Admin)",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "X-API-Key",
+						"value": "{{admin_api_key}}",
+						"description": "Admin API Key"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/users/2/deactivate",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"users",
+						"2",
+						"deactivate"
+					]
+				},
+				"description": "Deactivate a user account (admin only). Change '2' to the actual user ID."
+			},
+			"response": []
+		},
+		{
+			"name": "9. Reactivate User (Admin)",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "X-API-Key",
+						"value": "{{admin_api_key}}",
+						"description": "Admin API Key"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/users/2/reactivate",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"users",
+						"2",
+						"reactivate"
+					]
+				},
+				"description": "Reactivate a user account (admin only). Change '2' to the actual user ID."
+			},
+			"response": []
+		},
+		{
+			"name": "10. View Audit Logs (Admin)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-API-Key",
+						"value": "{{admin_api_key}}",
+						"description": "Admin API Key"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/audit-logs",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"audit-logs"
+					]
+				},
+				"description": "View all audit logs (admin only)"
+			},
+			"response": []
+		},
+		{
+			"name": "11. Add Another Quote (User)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "X-API-Key",
+						"value": "{{user_api_key}}",
+						"description": "User API Key"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"quote\": \"Innovation distinguishes between a leader and a follower.\",\n    \"author\": \"Steve Jobs\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/quotes",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"quotes"
+					]
+				},
+				"description": "Add another quote to test functionality"
+			},
+			"response": []
+		},
+		{
+			"name": "12. Test Deactivated User Access",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "X-API-Key",
+						"value": "{{user_api_key}}",
+						"description": "User API Key (should fail if user is deactivated)"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"quote\": \"This should fail if user is deactivated.\",\n    \"author\": \"Test Author\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/quotes",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"quotes"
+					]
+				},
+				"description": "Test adding quote with deactivated user (should fail)"
+			},
+			"response": []
+		},
+		{
+			"name": "13. Register Another User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 200) {",
+							"    const response = pm.response.json();",
+							"    if (response.success && response.data.api_key) {",
+							"        console.log('Second User API Key:', response.data.api_key);",
+							"    }",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"testuser2@example.com\",\n    \"password\": \"testpass456\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/register",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"register"
+					]
+				},
+				"description": "Register another user for testing"
+			},
+			"response": []
+		},
+		{
+			"name": "14. Test Invalid API Key",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "X-API-Key",
+						"value": "invalid-api-key-test",
+						"description": "Invalid API Key"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"quote\": \"This should fail with invalid API key.\",\n    \"author\": \"Test Author\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/quotes",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"quotes"
+					]
+				},
+				"description": "Test with invalid API key (should fail)"
+			},
+			"response": []
+		},
+		{
+			"name": "15. Test Missing API Key",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"quote\": \"This should fail without API key.\",\n    \"author\": \"Test Author\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/quotes",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"quotes"
+					]
+				},
+				"description": "Test without API key (should fail)"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
